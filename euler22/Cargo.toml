@@ -1,6 +1,7 @@
 [package]
 name = "euler22"
 version = "0.1.0"
-authors = ["Neil Cook <ncook@rbmtechnologies.com>"]
+authors = ["Neil Cook <20279+ncook@users.noreply.github.com>"]
 
 [dependencies]
+error-chain = "0.11.0"
