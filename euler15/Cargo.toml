@@ -1,0 +1,6 @@
+[package]
+name = "euler15"
+version = "0.1.0"
+authors = ["Neil Cook <ncook@rbmtechnologies.com>"]
+
+[dependencies]

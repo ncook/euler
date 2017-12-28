@@ -1,0 +1,7 @@
+[package]
+name = "euler6"
+version = "0.1.0"
+authors = ["Neil Cook <ncook@rbmtechnologies.com>"]
+
+[dependencies]
+itertools = "0.7.1"
