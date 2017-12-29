@@ -43,8 +43,8 @@ fn run() -> Result<()> {
     use std::io::BufRead;
     use std::io::BufReader;
 
-    let mut names = Vec::new();
-    const FNAME: &'static str = "../names.txt";
+    let mut names: Vec<Vec<u8>> = Vec::new();
+    const FNAME: &'static str = "p022_names.txt";
 
     let f = File::open(FNAME)
         .chain_err(|| "Failed to open name file")?;
@@ -53,15 +53,25 @@ fn run() -> Result<()> {
 
     for s in reader.split(b',') {
         match s {
-            Ok(s) => {
-                names.push(s[1..s.len()].to_vec());
-            },
-            Err(_) => panic!("Error reading file")
+            Ok(s) => names.push(s[1..(s.len()-1)].to_vec()),
+            Err(_) => panic!("Error reading file"),
         }
     };
-    // println!("There are {} amicable numbers less than {} and their sum is {}",
-    // amicable.len(), LIMIT, amicable.into_iter().sum::<usize>());
+
+    names.as_mut_slice().sort();
+
+    let total: usize = name_position(names).iter().sum();
+    println!("The total name position product sum is {}", total);
+
     Ok(())
+}
+
+fn name_value(bytes: &[u8]) -> usize {
+    bytes.iter().map(|&b| (b + 1 - b'A') as usize).sum()
+}
+
+fn name_position(names: Vec<Vec<u8>>) -> Vec<usize> {
+    names.iter().enumerate().map(|(i, n)| name_value(n) * (i + 1) ).collect()
 }
 
 #[cfg(test)]
@@ -69,7 +79,18 @@ mod tests {
     use super::*;
 
     #[test]
-    fn test_path_cost() {
-        // assert_eq!(proper_divisors_sum(42), 54); //1, 2, 3, 6, 7, 14, 21 sum=54
+    fn test_name_value() {
+        assert_eq!(name_value(b"A"), 1);
+        assert_eq!(name_value(b"COLIN"), 53);
+        assert_eq!(name_value(b"ALFA"), 20);
+        assert_eq!(name_value(b"BETA"), 28);
+    }
+
+    #[test]
+    fn test_name_position_value() {
+        let names: Vec<Vec<u8>> = vec![b"ALFA".to_vec(), b"BETA".to_vec()];
+        let name_positions = name_position(names);
+        assert_eq!(name_positions[0], 20);
+        assert_eq!(name_positions[1], 56);
     }
 }
