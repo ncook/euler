@@ -26,10 +26,12 @@ fn main() {
     println!("abundant: {:?}", abundant);
     // let r: Vec<u64> = abundant.into_iter().filter(|a| *a % 2 != 0).collect();
     // println!("oddly abundant: {:?}", r);
+
     // The lowest abundant number which is odd is 945. Thus there can be no odd numbers which are
     // the sum of two abundant numbers that are less than 945+12 = 957.
 
     let mut sum = 0;
+    // for i in 1..=35 {
     for i in 1..=28123 {
         match i {
             _ if i < 24 => more_abundant(i, &mut sum, 1),
@@ -52,9 +54,34 @@ fn more_abundant(new: u64, sum: &mut u64, p: u64) {
 }
 
 fn pick_two_abundant(target: u64, abundant: &[u64]) -> bool {
-    abundant
-        .iter()
-        .zip(abundant)
-        .take_while(|&(a, b)| (*a < target) || (*b < target) )
-        .any(|(a, b)| (a + b) == target )
+    let mut found = false;
+
+    for i in abundant {
+        if *i >= target { break }
+        for j in abundant {
+            if (*i + *j) > target { break }
+            if (*i + *j) == target { found = true; break }
+        }
+        if found { break }
+    }
+    found
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_abundant() {
+        let abundant = vec![12u64, 18, 20, 24, 30, 36, 40, 42, 48, 54, 56, 60];
+
+        assert_eq!(pick_two_abundant(16, &abundant), false);
+        assert_eq!(pick_two_abundant(26, &abundant), false);
+        assert_eq!(pick_two_abundant(27, &abundant), false);
+        assert_eq!(pick_two_abundant(28, &abundant), false);
+        assert_eq!(pick_two_abundant(30, &abundant), true);
+        assert_eq!(pick_two_abundant(32, &abundant), true);
+        assert_eq!(pick_two_abundant(34, &abundant), false);
+        assert_eq!(pick_two_abundant(36, &abundant), true);
+    }
 }
