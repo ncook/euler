@@ -13,6 +13,8 @@ extern crate num_integer;
 
 use num_integer::Integer;
 
+const FACTS: &[u64] = &[1, 2, 6, 24, 120, 720, 5040, 40320, 362880];
+
 fn main() {
     // There are 10! permutations of ten separate things. That is 3,628,800.
     // 9! = 362,880 8! = 40,320 7! = 5,040 6! = 720 5! = 120 4! = 24 3! = 6
@@ -24,18 +26,43 @@ fn main() {
     // 725761                                                                           1088640
     //  0      1      3      4      5       6       7       8       9
     //  766081 806401 846721 887041 927361  967681
-    const FACTS: &[u64] = &[1, 2, 6, 24, 120, 720, 5040, 40320, 362880];
 
-    let mut rem = 1_000_000;
-    let mut fidx = 8;
+    let digits = nth_perm(1_000_000, 10);
+    // let mut rem = 1_000_000;
+    // let mut fidx = 8;
+    // let mut digits = String::new();
+    //
+    // loop {
+    //     let (d, r) = rem.div_rem(&FACTS[fidx]);
+    //     digits += &d.to_string();
+    //     rem = r;
+    //     if fidx == 0 { break }
+    //     fidx -= 1;
+    // }
+    println!("The nth digit order is: {}", digits);
+}
+
+fn nth_perm(nth: u64, nvalues: u64) -> String {
+    let mut rem = nth;
+    let mut fidx = (nvalues - 1) as usize;
     let mut digits = String::new();
 
-    while rem > 0 {
+    loop {
         let (d, r) = rem.div_rem(&FACTS[fidx]);
         digits += &d.to_string();
         rem = r;
         if fidx == 0 { break }
         fidx -= 1;
     }
-    println!("The permutation is {}", digits);
+    digits
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_nth_perm() {
+        assert_eq!(nth_perm(1, 3), "123");
+    }
 }
