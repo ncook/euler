@@ -56,6 +56,7 @@ fn digit_order(nth: u64, nvalues: u64) -> Vec<u8> {
         so_far += FACTS[fidx] * d;
         println!("{:?}, {:?}, {:?}", so_far, d, r);
         if fidx == 0 {
+            // There is only one value left and that has exactly one permutation.
             digits.push(0);
             break
         }
