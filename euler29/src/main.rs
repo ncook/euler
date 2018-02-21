@@ -25,18 +25,13 @@ fn main() {
     let mut distinct: HashSet<Vec<(u64, u64)>> = HashSet::new();
     for a in 2..=100 {
         let mut fs = factor(a);
+        println!("Factors of {}: {:?}", a, fs);
         for b in 2..=100 {
             let full_factor = fs.iter().map(|&(f, t)| (f, t*b)).collect();
             distinct.insert(full_factor);
         }
     }
     println!("Distinct factors: {:?}", distinct.len());
-    println!("Factors: {:?}", distinct);
-    // for a in (2..100) {
-    //     let mut entries: Vec<(u64, u64)> = Vec::new();
-    //     distinct.contains((2, ))
-    //     println!("For {}: {:?}");
-    // }
 }
 
 fn factor(number: u64) -> Vec<(u64, u64)> {
@@ -44,17 +39,11 @@ fn factor(number: u64) -> Vec<(u64, u64)> {
 
     let mut factors: Vec<(u64, u64)> = Vec::new();
     let mut rem = number;
-    let mut times = 0;
     while rem > 1 {
         let (d, r) = rem.div_rem(&2);
         if r != 0 { break }
         record_factor(&mut factors, 2);
-        times += 1;
         rem = d;
-    }
-    if times > 0 {
-        println!("factor: {}, {}", 2, times);
-        record_factor(&mut factors, 2);
     }
 
     let mut found_factor = false;
@@ -63,7 +52,7 @@ fn factor(number: u64) -> Vec<(u64, u64)> {
         for i in (3..=sqrt).step_by(2) {
             let (d, r) = rem.div_rem(&i);
             if r == 0 {
-                record_factor(&mut factors, d);
+                record_factor(&mut factors, i);
                 found_factor = true;
                 rem = d;
                 break
@@ -85,14 +74,12 @@ fn record_factor(factors: &mut Vec<(u64, u64)>, factor: u64) {
     if let Some(mut most_recent_factor) = factors.pop() {
         if most_recent_factor.0 == factor {
             most_recent_factor.1 += 1;
-            println!("factor, count: {:?}", most_recent_factor);
             factors.push(most_recent_factor);
         } else {
-            println!("factor, one: {}, 1", factor);
+            factors.push((most_recent_factor.0, most_recent_factor.1));
             factors.push((factor, 1));
         }
     } else {
-        println!("factor, 1: {}, 1", factor);
         factors.push((factor, 1));
     }
 }
@@ -104,7 +91,7 @@ mod tests {
     #[test]
     fn test_factor() {
         assert_eq!(factor(17), [(17, 1)]);
-        assert_eq!(factor(24), [(2, 3)]);
+        assert_eq!(factor(24), [(2, 3), (3, 1)]);
         assert_eq!(factor(40), [(2, 3), (5, 1)]);
         assert_eq!(factor(12), [(2, 2), (3, 1)]);
     }
