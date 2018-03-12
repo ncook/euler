@@ -60,13 +60,7 @@ fn main() {
 fn run() -> Result<()> {
     let coins: Vec<u64> = vec![1, 2, 5, 10, 20, 50, 100, 200];
 
-    for first_coin in coins {
-        // Use from zero to as many of first_coin as possible before recusively seeking solutions
-        // for the remainer of the target
-    }
-    let solutions = using_at_most(coins.as_slice());
-    // File::open("contacts")
-    //     .chain_err(|| "unable to open contacts file")?;
+    let solutions = using_at_most(200, coins.as_slice());;
 
     println!("There are {} solutions.", solutions);
 
@@ -76,12 +70,37 @@ fn run() -> Result<()> {
 fn using_at_most(target: u64, coins: &[u64]) -> u64 {
     use num_integer::Integer;
 
+    if target == 0 { return 1 };
+
     let mut solutions = 0;
-    if let head = coins.get(0) {
+    if let Some(head) = coins.get(0) {
         let (max_used, left) = target.div_rem(&head);
-        for used in 0..=max_used {
-            solutions += using_at_most(left + used * head, coins);
+        // Use from zero to as many of first_coin as possible before recusively seeking solutions
+        // for the remainer of the target
+        println!("{:?} {}", max_used, left);
+        if coins.len() > 1 {
+            let c = &coins[1..=coins.len() - 1];
+            for used in 0..=max_used {
+                let s = using_at_most(left + used * head, c);
+                solutions += s;
+                println!{"new: {}, tot: {}, coins used: {:?}", s, solutions, c}
+            }
+        } else {
+            solutions += 1;
+            println!{"new: 1, tot: {}, coins: {:?}", solutions, coins};
         }
     }
     solutions
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_using_at_most() {
+        let mut arr = &[1u64];
+        assert_eq!(using_at_most(10, arr), 1);
+        assert_eq!(using_at_most(10, &[5u64, 1]), 3);
+    }
 }
