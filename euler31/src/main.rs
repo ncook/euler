@@ -67,8 +67,13 @@ fn run() -> Result<()> {
     Ok(())
 }
 
+// This approach works because with the coins in decending order, and with 1 being always able to
+// be used to complete a solution, we never get to the last coin and are not able to solve it. We
+// either have zero or a positive multiple of 1. It this were not the case, we would have to track
+// whether the combination was actually a solution or not.
 fn using_at_most(target: u64, coins: &[u64]) -> u64 {
     use num_integer::Integer;
+    println!("target: {}, coins: {:?}", target, coins);
 
     if target == 0 { return 1 };
 
@@ -77,11 +82,11 @@ fn using_at_most(target: u64, coins: &[u64]) -> u64 {
         let (max_used, left) = target.div_rem(&head);
         // Use from zero to as many of first_coin as possible before recusively seeking solutions
         // for the remainer of the target
-        println!("{:?} {}", max_used, left);
+        println!("{} head {} x {:?} + {}", target, head, max_used, left);
         if coins.len() > 1 {
             let c = &coins[1..=coins.len() - 1];
             for used in 0..=max_used {
-                let s = using_at_most(left + used * head, c);
+                let s = using_at_most(target - used * head, c);
                 solutions += s;
                 println!{"new: {}, tot: {}, coins used: {:?}", s, solutions, c}
             }
@@ -99,8 +104,13 @@ mod tests {
 
     #[test]
     fn test_using_at_most() {
-        let mut arr = &[1u64];
-        assert_eq!(using_at_most(10, arr), 1);
+        assert_eq!(using_at_most(10, &[200u64, 100, 50, 20, 10, 5, 2, 1]), 11);
+        assert_eq!(using_at_most(11, &[200u64, 100, 50, 20, 10, 5, 2, 1]), 12);
+        assert_eq!(using_at_most(20, &[200u64, 100, 50, 20, 10, 5, 2, 1]), 41);
+        assert_eq!(using_at_most(50, &[200u64, 100, 50, 20, 10, 5, 2, 1]), 451);
+        assert_eq!(using_at_most(100, &[200u64, 100, 50, 20, 10, 5, 2, 1]), 4563);
+        assert_eq!(using_at_most(200, &[200u64, 100, 50, 20, 10, 5, 2, 1]), 73682);
         assert_eq!(using_at_most(10, &[5u64, 1]), 3);
+        assert_eq!(using_at_most(10, &[5u64, 3, 1]), 7);
     }
 }
