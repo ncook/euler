@@ -17,7 +17,6 @@
 
 // `error_chain!` can recurse deeply
 #![recursion_limit = "1024"]
-#![feature(inclusive_range_syntax)]
 
 // Import the macro. Don't forget to add `error-chain` in your
 // `Cargo.toml`!
