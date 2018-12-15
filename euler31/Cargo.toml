@@ -2,6 +2,7 @@
 authors = ["Neil Cook <20279+ncook@users.noreply.github.com>"]
 name = "euler31"
 version = "0.1.0"
+edition = "2018"
 
 [dependencies]
 error-chain = "0.11.0"
